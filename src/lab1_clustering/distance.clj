@@ -1,8 +1,5 @@
-(ns lab1-clustering.maths
+(ns lab1-clustering.distance
 	(:require [clojure.math.numeric-tower :as math]))
-
-; (defn euclid-distance-nd [a, b]
-; 	(math/sqrt(reduce + (map #(math/pow (- %1 %2) 2) a b))))
 
 (defn- sqr [value]
 	(math/expt value 2))

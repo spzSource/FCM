@@ -1,7 +1,7 @@
 (ns lab1-clustering.core-test
   (:use clojure.test
         lab1-clustering.core
-        lab1-clustering.maths))
+        lab1-clustering.distance))
 
 (deftest euclid-distance-nd-test
   (testing "Distances mismatch."
