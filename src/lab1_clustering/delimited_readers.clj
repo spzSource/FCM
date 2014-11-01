@@ -2,7 +2,7 @@
 	(:require [clojure.java.io :as io]
               [clojure.string  :as str]))
 	
-(defn to-list [line, delimiter] 
+(defn- to-list [line, delimiter] 
     (map read-string (drop-last(str/split line delimiter))))
 
 (defn retrieve-data [path, delimiter]
