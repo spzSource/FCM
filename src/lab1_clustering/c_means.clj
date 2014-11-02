@@ -66,22 +66,27 @@
 (defn- update-potential-for-rejected-center [info, infos, p-value]
 	(map #(if (= (:index info) (:index %)) (assoc info :potential p-value) %), infos))
 
-(defn- need-new-center? []
-	())
+(defn- try-process-center [new-center, bounds, centers, revised-infos, first-center, ra, fn-distance]
+	(cond
+ 		(potential-greater-than-upper-bound? new-center, bounds) 
+ 			(recur (cons new-center centers), revised-infos)
+ 		
+ 		(potential-less-than-lower-bound? new-center, bounds)
+ 			(centers)
+ 		
+ 		(compare-with-min-distance? new-center, centers, first-center, ra, fn-distance) 
+ 			(recur (cons new-center centers), revised-infos)
+ 		
+ 		:else (recur centers, (update-potential-for-rejected-center new-center, revised-infos, 0))))
 
-(defn- try-select-new-center []
-	())
+(defn- try-select-new-center [new-center, bounds, centers, revised-infos, first-center, ra, fn-distance, eps-l, eps-h]
+	(let [new-center (determine-cluster-center revised-infos)]
+ 		(let [bounds (calc-potential-bounds (:potential new-center), eps-l, eps-h)]
+ 			(try-process-center new-center, bounds, centers, revised-infos, first-center, ra, fn-distance))))
 
 (defn make-clusterization [coords, fn-distance, alpha, beta, eps-l, eps-h, ra]
  	(let [start-infos (points-infos alpha, coords, fn-distance)]
  		(let [first-center (determine-cluster-center start-infos)]
  			(loop [centers [first-center] infos start-infos] 
  				(let [revised-infos (recalculate_infos beta, infos, (first centers), fn-distance)]
- 					(let [new-center (determine-cluster-center revised-infos)]
- 						(let [bounds (calc-potential-bounds (:potential new-center), eps-l, eps-h)]
- 							(cond
- 								(potential-greater-than-upper-bound? new-center, bounds) (recur (cons new-center centers), revised-infos)
- 								(potential-less-than-lower-bound? new-center, bounds)(centers)
- 								(compare-with-min-distance? new-center, centers, first-center, ra, fn-distance) (recur (cons new-center centers), revised-infos)
- 								:else (recur centers, (update-potential-for-rejected-center new-center, revised-infos, 0))
- 								))))))))
+ 					(try-select-new-center new-center, bounds, centers, revised-infos, first-center, ra, fn-distance, eps-l, eps-h))))))
