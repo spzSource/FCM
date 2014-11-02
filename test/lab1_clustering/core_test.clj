@@ -4,11 +4,16 @@
         lab1-clustering.distance
         lab1-clustering.c-means))
 
+;
+; @euclid-distance-nd
+;
 (deftest euclid-distance-nd-test
   (testing "Distances mismatch."
     (is (= 3 (euclid-distance-nd [1, 1] [4, 1])))))
 
-
+;
+; @determine-first-cluster
+;
 (deftest deternining-first-cluster-test
   (testing "Invalid first cluster definition."
   	(is (= 10 (:potential (determine-first-cluster [
