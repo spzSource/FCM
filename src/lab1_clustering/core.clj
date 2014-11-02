@@ -10,8 +10,15 @@
 
  (def ra 3)
 
- (def alpha 
- 	(/ 4 (* ra ra)))
+ (def rb (* 1.5 ra))
+
+ (def alpha (/ 4 (* ra ra)))
+
+ (def beta (/ 4 (* rb rb)))
+
+ (def eps-l 0.15)
+
+ (def eps-h 0.5)
 
 
 (def test-data (struct-map point-info
@@ -21,7 +28,13 @@
 (defn get-potential [point-info]
 	(:potential point-info))
 
- (defn -main [& args]
+
+(defn -main [& args]
+ 	(let [coords (retrieve-data first_path, delimiter)]
+ 		(doseq [center (make-clusterization coords, euclid-distance-nd, alpha, beta, eps-l, eps-h, ra)]  
+ 			(println center))))
+
+ ; (defn -main [& args]
  	; (let [coords (retrieve-data first_path, delimiter)]
  	; 	(doseq [item (points-infos alpha, coords, euclid-distance-nd)]  
  	; 		(println item))))
@@ -40,13 +53,13 @@
 
 
 
-(let [s (apply max-key (fn [x] (:potential x)) [(struct-map point-info
-					            		:coord '(1, 2, 3),
-					            		:potential 10),
-									  (struct-map point-info
-					            		:coord '(1, 2, 3),
-					            		:potential 11)])]
-	(println s)))
+; (let [s (apply max-key (fn [x] (:potential x)) [(struct-map point-info
+; 					            		:coord '(1, 2, 3),
+; 					            		:potential 10),
+; 									  (struct-map point-info
+; 					            		:coord '(1, 2, 3),
+; 					            		:potential 11)])]
+; 	(println s)))
 ; (get-potential (struct-map point-info
 ;             		:coord '(1, 2, 3),
 ;             		:potential 10)))
