@@ -1,6 +1,6 @@
 How to execute clusterization (example):
 -----------------------------------------
-	lein run lein run src/lab1_clustering/data/bezdekIris.data.txt hamming
+	lein run src/lab1_clustering/data/bezdekIris.data.txt hamming
 
 Note:
 -----	
