@@ -9,3 +9,6 @@
 
 (defn euclid-distance-nd [a, b]
 	(math/sqrt (euclid-squared-distance a, b)))
+
+(defn hamming-distance-nd [a, b]
+	(reduce + (map (fn [e, v] (if (= e v) 0 1)) a, b)))

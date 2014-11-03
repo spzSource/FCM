@@ -57,7 +57,7 @@
 	(apply max-key (fn [x] (:potential x)) infos))
 
 
-(defn- calc-potential-bounds 
+(defn calc-potential-bounds 
 	[potential, eps-l, eps-h]
 	(struct-map potential-bounds
 		:lower-bound (* potential eps-l)
@@ -74,25 +74,59 @@
 	(< (:potential center-info) (:lower-bound bounds)))
 
 
-(defn- calculate-min-distance 
+(defn calculate-min-distance 
 	[center-info, existing-centers, fn-distance]
 	(apply min (map #(fn-distance (:coord center-info) (:coord %)), existing-centers)))
 
 
-(defn- need-new-center? 
-	[center-info, existing-centers, first-center, ra, fn-distance]
-	(let [min-distance (calculate-min-distance center-info, existing-centers, fn-distance)]
-		(>= (+ (/ min-distance ra) (/ (:potential center-info) (:potential first-center)))) 1))
+(defn- corresponds-to-first-potential-exp? 
+	[center-info, existing-centers-infos, first-center, ra, fn-distance]
+	(let [min-distance (calculate-min-distance center-info, existing-centers-infos, fn-distance)
+		  c-potential  (:potential center-info)
+		  f-potential  (:potential first-center)]
+		(>= (+ (/ min-distance ra) (/ c-potential f-potential))) 1))
 
 
-(defn- remove-center-from-infos 
+(defn remove-center-from-infos 
 	[center-info, infos]
-	(remove #(= (:index center-info) :index %), infos))
+	(remove #(= (:index center-info) (:index %)), infos))
 
 
-(defn- update-potential-for-rejected-center 
+(defn update-potential-for-rejected-center 
 	[info, infos, p-value]
 	(map #(if (= (:index info) (:index %)) (assoc info :potential p-value) %), infos))
+
+
+(defn- try-apply-new-center
+	[centers, bounds, revised-infos, new-center, first-center, fn-distance, ra]
+	(cond
+ 		(potential-greater-than-upper-bound? new-center, bounds) 
+ 			{ :new-centers (cons new-center centers), 
+ 			  :new-infos revised-infos }
+
+ 		(potential-less-than-lower-bound? new-center, bounds)
+ 			{ :new-centers centers, 
+ 			  :new-infos '() }		
+
+ 		(corresponds-to-first-potential-exp? new-center, centers, first-center, ra, fn-distance) 
+ 			{ :new-centers (cons new-center centers), 
+ 			  :new-infos revised-infos }
+
+ 		:else { :new-centers centers, 
+ 			    :new-infos (update-potential-for-rejected-center new-center, revised-infos, 0) }))
+
+
+(defn- determine-new-center
+	[centers, infos, first-center, start-infos, fn-distance, beta, eps-l, eps-h, ra]
+	(let [revised-infos (recalculate_infos beta, infos, (first centers), fn-distance)
+ 		  new-center (determine-cluster-center revised-infos)
+ 		  bounds (calc-potential-bounds (:potential first-center), eps-l, eps-h)]
+ 		(try-apply-new-center centers, bounds, revised-infos, new-center, first-center, fn-distance, ra)))
+
+
+(defn- needed-new-center?
+	[state]
+	(empty? (:new-infos state)))
 
 
 (defn make-clusterization 
@@ -100,14 +134,7 @@
  	(let [start-infos  (points-infos alpha, coords, fn-distance)
  		  first-center (determine-cluster-center start-infos)]
  		(loop [centers [first-center] infos start-infos] 
- 			(let [revised-infos (recalculate_infos beta, infos, (first centers), fn-distance)
- 				  new-center (determine-cluster-center revised-infos)
- 				  bounds (calc-potential-bounds (:potential first-center), eps-l, eps-h)]
- 				(cond
- 					(potential-greater-than-upper-bound? new-center, bounds) 
- 						(recur (cons new-center centers), revised-infos)
- 					(potential-less-than-lower-bound? new-center, bounds)
- 						centers
- 					(need-new-center? new-center, centers, first-center, ra, fn-distance) 
- 						(recur (cons new-center centers), revised-infos);
- 					:else (recur centers, (update-potential-for-rejected-center new-center, revised-infos, 0)))))))
+ 			(let [state (determine-new-center centers, infos, first-center, start-infos, fn-distance, beta, eps-l, eps-h, ra)]
+ 				(if (needed-new-center? state)
+ 		  			(:new-centers state) 
+ 		  			(recur (:new-centers state) (:new-infos state)))))))
