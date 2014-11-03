@@ -126,7 +126,7 @@
 
 (defn- needed-new-center?
 	[state]
-	(empty? (:new-infos state)))
+	(seq (:new-infos state)))
 
 
 (defn make-clusterization 
@@ -136,5 +136,5 @@
  		(loop [centers [first-center] infos start-infos] 
  			(let [state (determine-new-center centers, infos, first-center, start-infos, fn-distance, beta, eps-l, eps-h, ra)]
  				(if (needed-new-center? state)
- 		  			(:new-centers state) 
- 		  			(recur (:new-centers state) (:new-infos state)))))))
+ 					(recur (:new-centers state) (:new-infos state))
+ 		  			(:new-centers state))))))
