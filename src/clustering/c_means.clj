@@ -1,7 +1,7 @@
-(ns lab1-clustering.c-means
+(ns clustering.c-means
 	(:gen-class)
 	(:require [clojure.math.numeric-tower :as math])
-	(:use lab1-clustering.distance)
+	(:use clustering.distance)
 	(import java.lang.Math))
 
 (defstruct point-info :index :coord :potential)

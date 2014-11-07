@@ -1,9 +1,9 @@
-(ns lab1-clustering.core
+(ns clustering.core
     (:gen-class)
   	(import java.lang.Math)
-    (:use lab1-clustering.delimited-readers)
-    (:use lab1-clustering.c-means)
-    (:use lab1-clustering.distance))
+    (:use clustering.delimited-readers)
+    (:use clustering.c-means)
+    (:use clustering.distance))
 
  ; (def ^:const first_path "src/lab1_clustering/data/bezdekIris.data.txt")
  (def ^:const delimiter #",")

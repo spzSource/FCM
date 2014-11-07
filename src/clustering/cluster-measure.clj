@@ -1,4 +1,4 @@
-(ns lab1-clustering.c-means-cluster
+(ns clustering.c-means-cluster
 	(import java.lang.Math))
 
 (defn- distance-measure [alpha, coords, coord, fn-distance]

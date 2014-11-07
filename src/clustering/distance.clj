@@ -1,4 +1,4 @@
-(ns lab1-clustering.distance
+(ns clustering.distance
 	(:require [clojure.math.numeric-tower :as math]))
 
 (defn- sqr [value]

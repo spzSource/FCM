@@ -1,4 +1,4 @@
-(ns lab1-clustering.delimited-readers
+(ns clustering.delimited-readers
 	(:require [clojure.java.io :as io]
               [clojure.string  :as str]))
 	
